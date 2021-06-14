@@ -53,37 +53,69 @@ export class PostResolver {
     const isDisAgree = value !== -1;
     const _value = isDisAgree ? 1 : -1;
     const { userId } = req.session;
-    await getConnection().query(
-      `
-      START TRANSACTION;
 
-      INSERT into dis_agree ("userId", "postId", value)
-      values (${userId},${postId},${_value});
+    const disagrees = await DisAgree.findOne({ where: { postId, userId } });
 
-      UPDATE post
-      SET points = points + ${_value}
-      WHERE id = ${postId};
-
-      COMMIT;
-    `
-    );
+    if (disagrees && disagrees.value !== _value) {
+      await getConnection().transaction(async (tm) => {
+        await tm.query(
+          `
+          UPDATE dis_agree
+          SET value = ${_value}
+          WHERE "postId" = ${postId} AND "userId" = ${userId}
+        `
+        );
+        await tm.query(
+          `
+            UPDATE post
+            SET points = points + ${2 * _value}
+            WHERE id = ${postId}
+          `
+        );
+      });
+    } else if (!disagrees) {
+      await getConnection().transaction(async (tm) => {
+        await tm.query(
+          `
+          INSERT into dis_agree ("userId", "postId", value)
+          values (${userId}, ${postId}, ${_value})
+        `
+        );
+        await tm.query(
+          `
+          UPDATE post
+          SET points = points + ${_value}
+          WHERE id = ${postId}
+        `
+        );
+      });
+    }
     return true;
   }
 
   @Query(() => PaginatedPosts)
   async posts(
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
-    // @Info() info: any
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+    @Ctx() { req }: MainContext
   ): Promise<PaginatedPosts> {
     const _limit = Math.min(50, limit);
     const _limitPlusOne = _limit + 1;
 
     const replacements: any[] = [_limitPlusOne];
 
+    if (req.session.userId) {
+      replacements.push(req.session.userId);
+    }
+
+    let cursorIndex = 3;
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
+      cursorIndex = replacements.length;
+
     }
+
+    console.log("sessid", req.session.userId);
 
     const posts = await getConnection().query(
       `
@@ -94,10 +126,15 @@ export class PostResolver {
         'email', u.email,
         'updatedAt', u."updatedAt",
         'createdAt', u."createdAt"
-      ) creator
+      ) creator,
+      ${
+        req.session.userId
+          ? `(SELECT value FROM dis_agree WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"`
+          : 'null as "voteStatus"'
+      }
       FROM post p
       INNER JOIN public.user u ON u.id = p."creatorId"
-      ${cursor ? `WHERE p."createdAt" < $2` : ""}
+      ${cursor ? `WHERE p."createdAt" < $${cursorIndex}` : ""}
       ORDER by p."createdAt" DESC
       LIMIT $1
     `,

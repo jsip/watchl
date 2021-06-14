@@ -27,7 +27,7 @@ const main = async () => {
     migrations: [path.join(__dirname, "./migrations/**")],
   });
 
-  await conn.runMigrations();
+  // await conn.runMigrations();
   // await Post.delete({});
 
   const app = express();

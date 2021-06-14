@@ -14,7 +14,7 @@ export const Wrapper: React.FC<WrapperProps> = ({
     <Box
       mt={8}
       mx="auto"
-      maxW={variant === "regular" ? "50rem" : "20rem"}
+      maxW={variant === "regular" ? "55rem" : "20rem"}
       w="100%"
       p={2}
     >
