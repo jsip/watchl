@@ -1,1 +1,0 @@
-export const stateObs = () => typeof window === 'undefined';

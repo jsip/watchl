@@ -1,5 +1,6 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import React from "react";
+import Sidebar from "./Sidebar";
 
 export type WrapperVariant = "small" | "regular";
 interface WrapperProps {
@@ -11,14 +12,16 @@ export const Wrapper: React.FC<WrapperProps> = ({
   variant = "regular",
 }) => {
   return (
-    <Box
-      mt={8}
-      mx="auto"
-      maxW={variant === "regular" ? "55rem" : "20rem"}
-      w="100%"
-      p={2}
-    >
-      {children}
-    </Box>
+    <Flex>
+      <Sidebar />
+      <Box
+        mt={8}
+        mx="auto"
+        maxW={variant === "regular" ? "55rem" : "20rem"}
+        w="100%"
+      >
+        {children}
+      </Box>
+    </Flex>
   );
 };

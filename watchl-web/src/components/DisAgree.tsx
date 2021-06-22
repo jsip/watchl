@@ -32,8 +32,8 @@ export const DisAgree: React.FC<DisAgreeProps> = ({ post }) => {
             color={post.voteStatus === 1 ? "green.300" : undefined}
             isloading={loadingState === "agree-loading" ? 0 : 1}
             aria-label="Agree"
-            w={8}
-            h={8}
+            w={6}
+            h={6}
           />
           {post.points}
           <ChevronDownIcon
@@ -48,8 +48,8 @@ export const DisAgree: React.FC<DisAgreeProps> = ({ post }) => {
             color={post.voteStatus === -1 ? "red.300" : undefined}
             isloading={loadingState === "disagree-loading" ? 0 : 1}
             aria-label="Disagree"
-            w={8}
-            h={8}
+            w={6}
+            h={6}
             _hover={{
               color: "red.500",
             }}

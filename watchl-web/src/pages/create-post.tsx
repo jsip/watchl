@@ -19,6 +19,11 @@ const CreatePost: React.FC<{}> = ({}) => {
       <Formik
         initialValues={{ title: "", content: "", tickers: "" }}
         onSubmit={async (values) => {
+          let _ticker = "";
+          values.tickers.split(" ").map((ticker) => {
+            _ticker += `$${ticker} `;
+          });
+          values.tickers = _ticker.trim();
           const { error } = await createPost({ input: values });
           if (!error) {
             router.push("/");

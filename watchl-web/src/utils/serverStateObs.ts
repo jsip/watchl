@@ -1,0 +1,1 @@
+export const serverStateObs = () => typeof window === 'undefined';

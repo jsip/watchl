@@ -2,14 +2,14 @@ import { Box, Button, Flex, Heading, Link, Spacer } from "@chakra-ui/react";
 import React from "react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
-import { stateObs } from "../utils/stateObs";
+import { serverStateObs } from "../utils/serverStateObs";
 
 interface NavBarProps {}
 
 const NavBar: React.FC<NavBarProps> = ({}) => {
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
   const [{ data, fetching }] = useMeQuery({
-    pause: stateObs(),
+    pause: serverStateObs(),
   });
   let navbar = null;
 
@@ -91,7 +91,9 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
       <Flex flex={1} m="auto" align="center">
         <NextLink href="/">
           <Link>
-            <Heading>Watchl</Heading>
+            <Heading size="2xl" color="#2D3748">
+              watchl.
+            </Heading>
           </Link>
         </NextLink>
         <Spacer />
