@@ -11,20 +11,44 @@ import Chart from "react-google-charts";
 
 let ticker = "$SPOT";
 
-const InfoTabs = ({}) => {
+const InfoTabs = ({ ticker }) => {
   return (
     <Tabs variant="solid-rounded" isLazy={true} colorScheme="twitter">
       <TabList>
-        <Tab borderWidth="0px" color="gray.600">
+        <Tab
+          borderWidth="0px"
+          color="gray.600"
+          _hover={{
+            bg: "blue.500",
+          }}
+        >
           <b>Chart</b>
         </Tab>
-        <Tab borderWidth="0px" color="gray.600">
+        <Tab
+          borderWidth="0px"
+          color="gray.600"
+          _hover={{
+            bg: "blue.500",
+          }}
+        >
           <b>Technicals</b>
         </Tab>
-        <Tab borderWidth="0px" color="gray.600">
+        <Tab
+          borderWidth="0px"
+          color="gray.600"
+          _hover={{
+            bg: "blue.500",
+          }}
+        >
           <b>Catalysts</b>
         </Tab>
-        <Tab borderWidth="0px" color="gray.600">
+        <Tab
+          borderWidth="0px"
+          color="gray.600"
+          _hover={{
+            bg: "blue.500",
+          }}
+        >
           <b>Fundamentals</b>
         </Tab>
       </TabList>

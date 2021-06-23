@@ -1,34 +1,28 @@
 import { ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
-  Badge,
-  Box,
-  Button,
-  Fade,
-  Flex,
-  Grid,
-  GridItem,
-  Heading,
-  Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  Tooltip,
+	Badge,
+	Box,
+	Button,
+	Fade,
+	Flex,
+	Grid,
+	GridItem,
+	Heading,
+	Link,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	Stack, Text,
+	Tooltip
 } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
-import { Chart } from "react-google-charts";
 import { DisAgree } from "../components/DisAgree";
 import InfoTabs from "../components/InfoTabs";
 import { Layout } from "../components/Layout";
+import TickerTape, { ticker } from "../components/TickerTape";
 import { useDeletePostMutation, usePostsQuery } from "../generated/graphql";
 import { createUrqlclient } from "../utils/createUrqlClient";
 
@@ -38,7 +32,6 @@ const Index = () => {
   let contentSnippetLength = 150;
   let contentSnippetLengthier = 550;
   let voteBool = false;
-  let ticker = "$SPOT";
 
   const [variables, setVariables] = useState({
     limit: 15,
@@ -172,34 +165,7 @@ const Index = () => {
                       maxHeight={postHeightState}
                     >
                       <GridItem rowSpan={1}>
-                        <Flex alignContent="right">
-                          {p.tickers.split(" ").map((tickr): any => {
-                            return (
-                              <Badge
-                                colorScheme="purple"
-                                mr={2}
-                                _hover={{
-                                  color: "purple.700",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                <Tooltip
-                                  hasArrow
-                                  label={tickr}
-                                  bg="white"
-                                  color="black"
-                                  padding="1em"
-                                  borderRadius="15px"
-                                  boxShadow={
-                                    "0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)"
-                                  }
-                                >
-                                  {tickr}
-                                </Tooltip>
-                              </Badge>
-                            );
-                          })}
-                        </Flex>
+                        <TickerTape tickers={p.tickers} />
                       </GridItem>
                       <GridItem rowSpan={1}>
                         <Box>
@@ -382,36 +348,37 @@ const Index = () => {
                         fontSize="2xl"
                         pt={3}
                       >
-                        <InfoTabs />
+                        <InfoTabs ticker={ticker} />
                       </GridItem>
                       <GridItem p={6} rowSpan={1}>
-                        <Box as="a">
-                          <Flex>
-                            <Button
-                              key={p.id}
-                              onClick={(ev) => {
-                                disagreeHandler(ev);
-                              }}
-                              ml={"auto"}
-                              mt={12}
-                              fontSize={"sm"}
-                              rounded={"full"}
-                              bg={"blue.400"}
-                              color={"white"}
-                              boxShadow={
-                                "0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)"
-                              }
-                              _hover={{
-                                bg: "blue.500",
-                              }}
-                              _focus={{
-                                bg: "blue.500",
-                              }}
-                            >
-                              {displayVoteState ? "Read Less" : "Read More"}
-                            </Button>
-                          </Flex>
-                        </Box>
+                        <Flex justify="flex-end">
+                          <NextLink href="/post/[id]" as={`/post/${p.id}`}>
+                            <Link>
+                              <Button
+                                // onClick={(ev) => {
+                                //   disagreeHandler(ev);
+                                // }}
+                                ml={"auto"}
+                                mt={12}
+                                fontSize={"sm"}
+                                rounded={"full"}
+                                bg={"blue.400"}
+                                color={"white"}
+                                boxShadow={
+                                  "0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)"
+                                }
+                                _hover={{
+                                  bg: "blue.500",
+                                }}
+                                _focus={{
+                                  bg: "blue.500",
+                                }}
+                              >
+                                {displayVoteState ? "Read Less" : "Read More"}
+                              </Button>
+                            </Link>
+                          </NextLink>
+                        </Flex>
                       </GridItem>
                     </Grid>
                   </GridItem>

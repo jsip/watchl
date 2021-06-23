@@ -2,7 +2,9 @@ import { Badge, Box, Flex, Heading, Spacer } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React from "react";
+import InfoTabs from "../../components/InfoTabs";
 import { Layout } from "../../components/Layout";
+import TickerTape, { ticker } from "../../components/TickerTape";
 import { usePostQuery } from "../../generated/graphql";
 import { createUrqlclient } from "../../utils/createUrqlClient";
 
@@ -41,15 +43,7 @@ const Post = ({}) => {
   return (
     <Layout>
       <Box>
-        <>
-          {data.post.tickers.split(" ").map((ticker) => {
-            return (
-              <Badge colorScheme="purple" mr={2}>
-                {ticker}
-              </Badge>
-            );
-          })}
-        </>
+        <TickerTape tickers={data.post.tickers} />
         <br />
         <br />
         <Flex>
@@ -57,6 +51,9 @@ const Post = ({}) => {
         </Flex>
         <br />
         <>{data.post.content}</>
+        <Flex margin="auto" mt={12} w={"50%"}>
+          <InfoTabs ticker={ticker} />
+        </Flex>
       </Box>
     </Layout>
   );
