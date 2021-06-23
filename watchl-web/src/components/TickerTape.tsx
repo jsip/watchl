@@ -19,7 +19,7 @@ const TickerTape = ({ tickers }) => {
       {tickers.split(" ").map((tickr): any => {
         return (
           <Badge
-            colorScheme="purple"
+            colorScheme="twitter"
             mr={2}
             _hover={{
               color: "purple.700",

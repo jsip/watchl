@@ -46,9 +46,10 @@ export type MutationCreatePostArgs = {
 
 
 export type MutationUpdatePostArgs = {
-  content?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  id: Scalars['Float'];
+  tickers: Scalars['String'];
+  content: Scalars['String'];
+  title: Scalars['String'];
+  id: Scalars['Int'];
 };
 
 
@@ -267,6 +268,22 @@ export type ResetPasswordMutation = (
   ) }
 );
 
+export type UpdatePostMutationVariables = Exact<{
+  id: Scalars['Int'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  tickers: Scalars['String'];
+}>;
+
+
+export type UpdatePostMutation = (
+  { __typename?: 'Mutation' }
+  & { updatePost?: Maybe<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'content' | 'contentSnippet' | 'tickers'>
+  )> }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -438,6 +455,23 @@ export const ResetPasswordDocument = gql`
 
 export function useResetPasswordMutation() {
   return Urql.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(ResetPasswordDocument);
+};
+export const UpdatePostDocument = gql`
+    mutation UpdatePost($id: Int!, $title: String!, $content: String!, $tickers: String!) {
+  updatePost(id: $id, title: $title, content: $content, tickers: $tickers) {
+    id
+    createdAt
+    updatedAt
+    title
+    content
+    contentSnippet
+    tickers
+  }
+}
+    `;
+
+export function useUpdatePostMutation() {
+  return Urql.useMutation<UpdatePostMutation, UpdatePostMutationVariables>(UpdatePostDocument);
 };
 export const MeDocument = gql`
     query Me {

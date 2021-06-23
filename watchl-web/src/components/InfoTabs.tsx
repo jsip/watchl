@@ -9,9 +9,9 @@ import {
 import React from "react";
 import Chart from "react-google-charts";
 
-let ticker = "$SPOT";
-
-const InfoTabs = ({ ticker }) => {
+const InfoTabs = ({ ticker, size }) => {
+  let width;
+  size === "lg" ? (width = 800) : (width = 400);
   return (
     <Tabs variant="solid-rounded" isLazy={true} colorScheme="twitter">
       <TabList>
@@ -61,7 +61,7 @@ const InfoTabs = ({ ticker }) => {
         alt=""
       /> */}
             <Chart
-              width={400}
+              width={width}
               height={350}
               chartType="CandlestickChart"
               loader={<div>Loading Chart</div>}
@@ -123,7 +123,7 @@ const InfoTabs = ({ ticker }) => {
         <TabPanel>
           <GridItem>
             <Chart
-              width={400}
+              width={width}
               height={350}
               chartType="LineChart"
               loader={<div>Loading Chart</div>}
