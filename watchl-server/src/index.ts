@@ -11,9 +11,11 @@ import connectRedis from "connect-redis";
 import cors from "cors";
 import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
-import { User } from "./entities/User";
+import {User} from "./entities/User";
 import path from "path";
 import { DisAgree } from "./entities/DisAgree";
+import { createUserLoader } from "./utils/createUserLoader";
+import { createDisAgreeLoader } from "./utils/createDisAgreeLoader";
 
 const main = async () => {
   const conn = await createConnection({
@@ -66,7 +68,13 @@ const main = async () => {
       resolvers: [PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ req, res, redis }),
+    context: ({ req, res }) => ({
+      req,
+      res,
+      redis,
+      userLoader: createUserLoader(),
+      disAgreeLoader: createDisAgreeLoader(),
+    }),
   });
 
   // const post = orm.em.create(Post, {title: 'Watchlist', content: '$WEED, $DE'});

@@ -24,7 +24,7 @@ import TickerTape, { ticker } from "./TickerTape";
 const Post = ({ postObj }) => {
   let postHeight = "30rem";
   let postHeightier = "30rem";
-  let contentSnippetLength = 150;
+  let contentSnippetLength = 200;
   let contentSnippetLengthier = 550;
   let voteBool = false;
 

@@ -1,4 +1,3 @@
-import { DisAgree } from "../entities/DisAgree";
 import { MainContext } from "src/types";
 import {
   Arg,
@@ -16,7 +15,9 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { MAX_CONTENT_LENGTH } from "../constants";
+import { DisAgree } from "../entities/DisAgree";
 import { Post } from "../entities/Post";
+import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 @InputType()
 class PostInput {
@@ -41,6 +42,26 @@ export class PostResolver {
   @FieldResolver(() => String)
   contentSnippet(@Root() root: Post) {
     return root.content.slice(0, MAX_CONTENT_LENGTH);
+  }
+
+  @FieldResolver(() => User)
+  creator(@Root() post: Post, @Ctx() { userLoader }: MainContext) {
+    return userLoader.load(post.creatorId);
+  }
+
+  @FieldResolver(() => Int, { nullable: true })
+  async voteStatus(
+    @Root() post: Post,
+    @Ctx() { disAgreeLoader, req }: MainContext
+  ) {
+    if (!req.session.userId) {
+      return null;
+    }
+    const disAgree = await disAgreeLoader.load({
+      postId: post.id,
+      userId: req.session.userId as number,
+    });
+    return disAgree ? disAgree.value : null;
   }
 
   @Mutation(() => Boolean)
@@ -104,36 +125,17 @@ export class PostResolver {
 
     const replacements: any[] = [_limitPlusOne];
 
-    if (req.session.userId) {
-      replacements.push(req.session.userId);
-    }
-
-    let cursorIndex = 3;
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
-      cursorIndex = replacements.length;
     }
 
     console.log("sessid", req.session.userId);
 
     const posts = await getConnection().query(
       `
-      SELECT p.*, 
-      json_build_object(
-        'id', u.id,
-        'username', u.username,
-        'email', u.email,
-        'updatedAt', u."updatedAt",
-        'createdAt', u."createdAt"
-      ) creator,
-      ${
-        req.session.userId
-          ? `(SELECT value FROM dis_agree WHERE "userId" = $2 AND "postId" = p.id) "voteStatus"`
-          : 'null as "voteStatus"'
-      }
+      SELECT p.*
       FROM post p
-      INNER JOIN public.user u ON u.id = p."creatorId"
-      ${cursor ? `WHERE p."createdAt" < $${cursorIndex}` : ""}
+      ${cursor ? `WHERE p."createdAt" < $2` : ""}
       ORDER by p."createdAt" DESC
       LIMIT $1
     `,
@@ -148,7 +150,7 @@ export class PostResolver {
 
   @Query(() => Post, { nullable: true })
   post(@Arg("id", () => Int) id: number): Promise<Post | undefined> {
-    return Post.findOne(id, { relations: ["creator"] });
+    return Post.findOne(id);
   }
 
   @Mutation(() => Post)

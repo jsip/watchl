@@ -19,7 +19,7 @@ const TickerTape = ({ tickers }) => {
       {tickers.split(" ").map((tickr): any => {
         return (
           <Badge
-            colorScheme="twitter"
+            colorScheme="purple"
             mr={2}
             _hover={{
               color: "purple.700",
@@ -28,6 +28,7 @@ const TickerTape = ({ tickers }) => {
             onClick={() => {
               ticker = tickr;
             }}
+            key={`${tickr}`}
           >
             <Tooltip
               hasArrow

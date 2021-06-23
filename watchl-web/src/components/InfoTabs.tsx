@@ -225,6 +225,7 @@ const InfoTabs = ({ ticker, size }) => {
             <li>Uplists</li>
             <li>Technical Alerts</li>
             <li>SEC Filings</li>
+            <li>Social Sentiment</li>
           </ul>
         </TabPanel>
         <TabPanel>

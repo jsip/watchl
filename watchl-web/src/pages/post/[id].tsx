@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
@@ -8,7 +8,6 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
-import { Router } from "next/router";
 import React from "react";
 import { DisAgree } from "../../components/DisAgree";
 import InfoTabs from "../../components/InfoTabs";
@@ -55,8 +54,6 @@ const Post = ({}) => {
         borderRadius="25px"
         p={8}
       >
-        <TickerTape tickers={data.post.tickers} />
-        <br />
         <Flex>
           <DisAgree post={data.post as any} />
           <Box fontSize="small">
@@ -88,6 +85,8 @@ const Post = ({}) => {
             </Tooltip>
           </Box>
         </Flex>
+        <br />
+        <TickerTape tickers={data.post.tickers} />
         <br />
         <>{data.post.content}</>
         <Box margin="auto" mt={12}>

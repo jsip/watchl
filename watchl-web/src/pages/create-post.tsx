@@ -42,6 +42,7 @@ const CreatePost: React.FC<{}> = ({}) => {
                 label="Tickers"
               />
               <br />
+              {/* ajouter timeframe picker */}
               <br />
               <InputField name="content" placeholder="Note" label="Note" />
             </Box>

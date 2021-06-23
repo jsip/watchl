@@ -21,12 +21,24 @@ const Index = () => {
     cursor: null as null | string,
   });
 
-  const [{ data, fetching }] = usePostsQuery({
+  const [{ data, error, fetching }] = usePostsQuery({
     variables,
   });
 
   if (!fetching && !data) {
-    return <div>No posts were found ☹</div>;
+    return (
+      <div style={{ textAlign: "center" }}>
+        No posts were found ☹
+        <br />
+        <br />
+        <br />
+        <div>
+          Error msg: {error?.message}
+          <br />
+          Error stack: {error?.stack || "No stack trace"}
+        </div>
+      </div>
+    );
   }
 
   return (
