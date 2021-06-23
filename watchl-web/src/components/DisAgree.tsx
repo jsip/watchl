@@ -14,7 +14,7 @@ export const DisAgree: React.FC<DisAgreeProps> = ({ post }) => {
   const [, vote] = useVoteMutation();
   return (
     <>
-      <Box float="left">
+      <Box float="left" pr={4}>
         <Flex direction="column" justifyContent="center" alignItems="center">
           <ChevronUpIcon
             onClick={async () => {

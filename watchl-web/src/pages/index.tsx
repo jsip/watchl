@@ -1,31 +1,33 @@
-import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  DeleteIcon,
-} from "@chakra-ui/icons";
+import { ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Badge,
   Box,
   Button,
+  Fade,
   Flex,
   Grid,
   GridItem,
   Heading,
   Link,
-  LinkBox,
-  LinkOverlay,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Stack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   Tooltip,
 } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
+import { Chart } from "react-google-charts";
 import { DisAgree } from "../components/DisAgree";
+import InfoTabs from "../components/InfoTabs";
 import { Layout } from "../components/Layout";
 import { useDeletePostMutation, usePostsQuery } from "../generated/graphql";
 import { createUrqlclient } from "../utils/createUrqlClient";
@@ -36,6 +38,7 @@ const Index = () => {
   let contentSnippetLength = 150;
   let contentSnippetLengthier = 550;
   let voteBool = false;
+  let ticker = "$SPOT";
 
   const [variables, setVariables] = useState({
     limit: 15,
@@ -138,203 +141,284 @@ const Index = () => {
         </div>
       ) : (
         <Stack spacing={8}>
-          {data.posts.posts.map((p) => !p ? null : (
-            <LinkBox
-              key={p.id}
-              shadow="md"
-              borderWidth="5px"
-              boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
-              _hover={{
-                borderColor: "blue.100",
-              }}
-              borderColor="blue.50"
-              borderRadius="25px"
-              h={postHeightState}
-              minHeight={postHeightState}
-              maxHeight={postHeightState}
-            >
-              <Grid
-                templateColumns="repeat(2, 1fr)"
+          {data.posts.posts.map((p) =>
+            !p ? null : (
+              <Box
+                key={p.id}
+                shadow="md"
+                borderWidth="5px"
+                boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
+                _hover={{
+                  borderColor: "blue.100",
+                }}
+                borderColor="blue.50"
+                borderRadius="25px"
                 h={postHeightState}
                 minHeight={postHeightState}
                 maxHeight={postHeightState}
               >
-                <GridItem>
-                  <Grid
-                    templateRows="repeat(10, 1fr)"
-                    p={6}
-                    h={postHeightState}
-                    minHeight={postHeightState}
-                    maxHeight={postHeightState}
-                  >
-                    <GridItem rowSpan={1}>
-                      <Flex alignContent="right">
-                        {p.tickers.split(" ").map((ticker) => {
-                          return (
-                            <Badge colorScheme="purple" mr={2}>
-                              {ticker}
+                <Grid
+                  templateColumns="repeat(2, 1fr)"
+                  h={postHeightState}
+                  minHeight={postHeightState}
+                  maxHeight={postHeightState}
+                >
+                  <GridItem>
+                    <Grid
+                      templateRows="repeat(10, 1fr)"
+                      p={6}
+                      h={postHeightState}
+                      minHeight={postHeightState}
+                      maxHeight={postHeightState}
+                    >
+                      <GridItem rowSpan={1}>
+                        <Flex alignContent="right">
+                          {p.tickers.split(" ").map((tickr): any => {
+                            return (
+                              <Badge
+                                colorScheme="purple"
+                                mr={2}
+                                _hover={{
+                                  color: "purple.700",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <Tooltip
+                                  hasArrow
+                                  label={tickr}
+                                  bg="white"
+                                  color="black"
+                                  padding="1em"
+                                  borderRadius="15px"
+                                  boxShadow={
+                                    "0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)"
+                                  }
+                                >
+                                  {tickr}
+                                </Tooltip>
+                              </Badge>
+                            );
+                          })}
+                        </Flex>
+                      </GridItem>
+                      <GridItem rowSpan={1}>
+                        <Box>
+                          {displayVoteState ? (
+                            <Fade in={displayVoteState}>
+                              <DisAgree post={p} />
+                            </Fade>
+                          ) : (
+                            ""
+                          )}
+                        </Box>
+                        <NextLink href="/post/[id]" as={`/post/${p.id}`}>
+                          <Link>
+                            <Heading
+                              fontSize="3xl"
+                              maxW="20vw"
+                              isTruncated
+                              lineHeight="3.5rem"
+                            >
+                              {p.title}
+                            </Heading>
+                            <Heading fontSize="small">
+                              By {p.creator.username}{" "}
+                              <ChevronRightIcon ml={0} w={4} h={4} />
+                            </Heading>
+                          </Link>
+                        </NextLink>
+                      </GridItem>
+                      <GridItem rowSpan={3} mt={3}>
+                        <Text>
+                          {p.contentSnippet}
+                          {p.contentSnippet.length < snippetLengthState
+                            ? ""
+                            : "..."}
+                        </Text>
+                      </GridItem>
+                      <GridItem rowSpan={1}>
+                        <Box>
+                          <Flex>
+                            <Badge
+                              mr={2}
+                              variant="solid"
+                              backgroundColor="#4299e1"
+                              color="white"
+                              _hover={{
+                                color: "blue.700",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <Tooltip
+                                hasArrow
+                                label={`
+																	Industrials // 
+																	Value Companies // 
+																	Cyclical & Volatile Cash Flow Unicorns // 
+																	Growth Companies // 
+																	Strong, Predictable Cash Flows
+																		- Pricing in Market Expectations // 
+																	Cash Cows and Dividend Payers // 
+																	Timeframe // 
+																	Technical Alerts
+																`}
+                                bg="white"
+                                color="black"
+                                padding="1em"
+                                borderRadius="15px"
+                                boxShadow={
+                                  "0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)"
+                                }
+                              >
+                                Tags
+                              </Tooltip>
                             </Badge>
-                          );
-                        })}
-                      </Flex>
-                    </GridItem>
-                    <GridItem rowSpan={1}>
-                      <NextLink href="/post/[id]" as={`/post/${p.id}`}>
-                        <LinkOverlay>
-                          {/* {displayVoteState ? <DisAgree post={p} /> : ""} */}
-                          <Heading fontSize="2xl" maxW="20vw" isTruncated>
-                            {p.title}
-                          </Heading>
-                          <Heading fontSize="small" mt={1}>
-                            By {p.creator.username}{" "}
-                            <ChevronRightIcon ml={0} w={4} h={4} />
-                          </Heading>
-                        </LinkOverlay>
-                      </NextLink>
-                    </GridItem>
-                    <GridItem rowSpan={2} mt={3}>
-                      <Text>
-                        {p.contentSnippet}
-                        {p.contentSnippet.length < snippetLengthState
-                          ? ""
-                          : "..."}
-                      </Text>
-                    </GridItem>
-                    <GridItem rowSpan={1} mt={3}>
-                      <Box>
-                        <Flex>
-                          <Badge
-                            mr={2}
-                            variant="solid"
-                            backgroundColor="#4299e1"
-                            color="white"
-                          >
-                            Anchored VWAP
-                          </Badge>
-                          <Badge
-                            mr={2}
-                            variant="solid"
-                            backgroundColor="#4299e1"
-                            color="white"
-                          >
-                            Growth
-                          </Badge>
-                          <Badge
-                            variant="solid"
-                            backgroundColor="#4299e1"
-                            color="white"
-                          >
-                            50MA
-                          </Badge>
-                        </Flex>
-                      </Box>
-                    </GridItem>
-                    <GridItem rowSpan={4} mt={4}>
-                      <Heading fontSize="large" mb={3}>
-                        See what people are saying{" "}
-                        <ChevronRightIcon></ChevronRightIcon>
-                      </Heading>
-                      <Box pl={1} mb={1}>
-                        <Text fontWeight="500" fontSize="medium">
-                          Segun Adebayo
-                          <Badge ml="1" colorScheme="red">
-                            Controversial
-                          </Badge>
-                        </Text>
-                        <Text fontSize="sm">
-                          What a stupid fucking take LMAO
-                        </Text>
-                      </Box>
-                      <Box pl={1}>
-                        <Text fontWeight="500" fontSize="medium">
-                          Kanye West
-                          <Badge ml="1" colorScheme="green">
-                            Most Liked
-                          </Badge>
-                        </Text>
-                        <Text fontSize="sm">Great stocks, Peter!</Text>
-                      </Box>
-                    </GridItem>
-                    <GridItem rowSpan={1}>
-                      <Menu>
-                        <MenuButton
-                          as={Button}
-                          leftIcon={<ChevronDownIcon />}
-                          p={0}
+                          </Flex>
+                        </Box>
+                      </GridItem>
+                      <GridItem rowSpan={4} mt={2}>
+                        <Box
+                          borderLeft="4px solid gainsboro"
+                          pl={4}
+                          _hover={{
+                            borderLeft: "4px solid #4299e1",
+                            cursor: "pointer",
+                          }}
                         >
-                          <Text fontSize={"xx-small"}>
-                            {p.updatedAt === p.createdAt
-                              ? `Posted on ${new Date(
-                                  parseInt(p.updatedAt)
-                                ).toLocaleString()}`
-                              : `Last edited on ${new Date(
-                                  parseInt(p.updatedAt)
-                                ).toLocaleString()}`}
-                          </Text>
-                        </MenuButton>
-                        <MenuList backgroundColor="white">
-                          <MenuItem
-                            onClick={() => {
-                              deletePost({ id: p.id });
-                            }}
-                          >
-                            Delete
-                          </MenuItem>
-                          <MenuItem>Edit</MenuItem>
-                        </MenuList>
-                      </Menu>
-                    </GridItem>
-                  </Grid>
-                </GridItem>
-
-                <GridItem>
-                  <Grid
-                    templateRows="repeat(10, 1fr)"
-                    h={postHeightState}
-                    minHeight={postHeightState}
-                    maxHeight={postHeightState}
-                  >
-                    <GridItem rowSpan={9}>
-                      <Box w="90%" m="auto">
-                        <img
-                          src="https://i.gyazo.com/6fbfea9f2352b16610cb5c2e88f4481a.png"
-                          alt=""
-                        />
-                      </Box>
-                    </GridItem>
-                    <GridItem p={6} rowSpan={1}>
-                      <Box as="a">
-                        <Flex>
-                          <Button
-                            onClick={(ev) => {
-                              disagreeHandler(ev);
-                            }}
-                            ml={"auto"}
-                            mt={12}
-                            fontSize={"sm"}
-                            rounded={"full"}
-                            bg={"blue.400"}
-                            color={"white"}
-                            boxShadow={
-                              "0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)"
-                            }
+                          <Heading
+                            fontSize="large"
+                            mb={3}
+                            color="gray.500"
                             _hover={{
-                              bg: "blue.500",
-                            }}
-                            _focus={{
-                              bg: "blue.500",
+                              color: "gray.600",
                             }}
                           >
-                            {displayVoteState ? "Read Less" : "Read More"}
-                          </Button>
-                        </Flex>
-                      </Box>
-                    </GridItem>
-                  </Grid>
-                </GridItem>
-              </Grid>
-            </LinkBox>
-          ))}
+                            See what people are saying{" "}
+                            <ChevronRightIcon></ChevronRightIcon>
+                          </Heading>
+                          <Box mb={1}>
+                            <Text
+                              fontWeight="500"
+                              fontSize="medium"
+                              color="gray.500"
+                              _hover={{
+                                color: "gray.600",
+                              }}
+                            >
+                              Segun Adebayo
+                              <Badge ml="1" colorScheme="red">
+                                Controversial
+                              </Badge>
+                            </Text>
+                            <Text fontSize="sm">I disagree, this is dumb.</Text>
+                          </Box>
+                          <Box>
+                            <Text
+                              fontWeight="500"
+                              fontSize="medium"
+                              color="gray.500"
+                              _hover={{
+                                color: "gray.600",
+                              }}
+                            >
+                              Kanye West
+                              <Badge ml="1" colorScheme="green">
+                                Most Liked
+                              </Badge>
+                            </Text>
+                            <Text fontSize="sm">Great picks, Peter!</Text>
+                          </Box>
+                        </Box>
+                      </GridItem>
+
+                      <GridItem rowSpan={1}>
+                        <Menu>
+                          <MenuButton
+                            as={Button}
+                            leftIcon={<ChevronDownIcon />}
+                            p={0}
+                          >
+                            <Text fontSize={"xx-small"}>
+                              {p.updatedAt === p.createdAt
+                                ? `Posted on ${new Date(
+                                    parseInt(p.updatedAt)
+                                  ).toLocaleString()}`
+                                : `Last edited on ${new Date(
+                                    parseInt(p.updatedAt)
+                                  ).toLocaleString()}`}
+                            </Text>
+                          </MenuButton>
+                          <MenuList
+                            backgroundColor="white"
+                            border="none"
+                            boxShadow={
+                              "0px 1px 25px -5px rgb(66 153 225 / 50%)"
+                            }
+                          >
+                            <MenuItem
+                              onClick={() => {
+                                deletePost({ id: p.id });
+                              }}
+                            >
+                              Delete
+                            </MenuItem>
+                            <MenuItem>Edit</MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </GridItem>
+                    </Grid>
+                  </GridItem>
+
+                  <GridItem>
+                    <Grid
+                      templateRows="repeat(10, 1fr)"
+                      h={postHeightState}
+                      minHeight={postHeightState}
+                      maxHeight={postHeightState}
+                    >
+                      <GridItem
+                        rowSpan={9}
+                        textAlign="center"
+                        fontSize="2xl"
+                        pt={3}
+                      >
+                        <InfoTabs />
+                      </GridItem>
+                      <GridItem p={6} rowSpan={1}>
+                        <Box as="a">
+                          <Flex>
+                            <Button
+                              key={p.id}
+                              onClick={(ev) => {
+                                disagreeHandler(ev);
+                              }}
+                              ml={"auto"}
+                              mt={12}
+                              fontSize={"sm"}
+                              rounded={"full"}
+                              bg={"blue.400"}
+                              color={"white"}
+                              boxShadow={
+                                "0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)"
+                              }
+                              _hover={{
+                                bg: "blue.500",
+                              }}
+                              _focus={{
+                                bg: "blue.500",
+                              }}
+                            >
+                              {displayVoteState ? "Read Less" : "Read More"}
+                            </Button>
+                          </Flex>
+                        </Box>
+                      </GridItem>
+                    </Grid>
+                  </GridItem>
+                </Grid>
+              </Box>
+            )
+          )}
         </Stack>
       )}
       {data && data.posts.hasMore ? (

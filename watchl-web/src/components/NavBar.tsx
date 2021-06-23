@@ -80,7 +80,7 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
             bg: "blue.500",
           }}
         >
-          Logout
+          <h4 style={{ verticalAlign: "middle" }}>Logout</h4>
         </Button>
       </Flex>
     );

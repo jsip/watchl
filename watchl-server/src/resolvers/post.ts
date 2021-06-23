@@ -185,7 +185,15 @@ export class PostResolver {
     @Arg("id", () => Int) id: number,
     @Ctx() { req }: MainContext
   ): Promise<Boolean> {
-    await Post.delete({ id, creatorId: req.session.userId });
+    const post = await Post.findOne(id);
+    if (!post) {
+      return false;
+    }
+    if (post.creatorId !== req.session.userId) {
+      throw new Error("You are not the author of this post!");
+    }
+    await DisAgree.delete({ postId: id });
+    await Post.delete({ id });
     return true;
   }
 }
