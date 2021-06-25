@@ -24,7 +24,7 @@ import TickerTape, { ticker } from "./TickerTape";
 const Post = ({ postObj }) => {
   let postHeight = "30rem";
   let postHeightier = "30rem";
-  let contentSnippetLength = 200;
+  let contentSnippetLength = 150;
   let contentSnippetLengthier = 550;
   let voteBool = false;
 
@@ -85,16 +85,15 @@ const Post = ({ postObj }) => {
         >
           <GridItem>
             <Grid
-              templateRows="repeat(10, 1fr)"
               p={6}
               h={postHeightState}
               minHeight={postHeightState}
               maxHeight={postHeightState}
             >
-              <GridItem rowSpan={1}>
+              <GridItem rowStart={1} rowEnd={1}>
                 <TickerTape tickers={p.tickers} />
               </GridItem>
-              <GridItem rowSpan={1}>
+              <GridItem rowStart={2} rowEnd={3}>
                 <Box>
                   {displayVoteState ? (
                     <Fade in={displayVoteState}>
@@ -142,13 +141,13 @@ const Post = ({ postObj }) => {
                   </Heading>
                 </Tooltip>
               </GridItem>
-              <GridItem rowSpan={3} mt={3}>
+              <GridItem rowStart={3} rowEnd={6} mt={2}>
                 <Text>
                   {p.contentSnippet}
                   {p.contentSnippet.length < snippetLengthState ? "" : "..."}
                 </Text>
               </GridItem>
-              <GridItem rowSpan={1}>
+              <GridItem rowStart={6} rowEnd={10}>
                 <Box>
                   <Flex>
                     <Badge
@@ -188,7 +187,7 @@ const Post = ({ postObj }) => {
                   </Flex>
                 </Box>
               </GridItem>
-              <GridItem rowSpan={4} mt={2}>
+              <GridItem rowStart={10} rowEnd={12}>
                 <Box
                   borderLeft="4px solid gainsboro"
                   pl={4}
@@ -243,7 +242,7 @@ const Post = ({ postObj }) => {
                 </Box>
               </GridItem>
 
-              <GridItem rowSpan={1}>
+              <GridItem rowStart={12}>
                 <PostOpts p={p} />
               </GridItem>
             </Grid>
@@ -251,15 +250,15 @@ const Post = ({ postObj }) => {
 
           <GridItem>
             <Grid
-              templateRows="repeat(10, 1fr)"
+              templateRows="repeat(12, 1fr)"
               h={postHeightState}
               minHeight={postHeightState}
               maxHeight={postHeightState}
             >
-              <GridItem rowSpan={9} textAlign="center" fontSize="2xl" pt={3}>
+              <GridItem rowStart={1} rowEnd={10} textAlign="center" fontSize="2xl" pt={3}>
                 <InfoTabs ticker={ticker} size={""} />
               </GridItem>
-              <GridItem p={6} rowSpan={1}>
+              <GridItem p={6} rowStart={12} rowEnd={12}>
                 <Flex justify="flex-end">
                   <NextLink href="/post/[id]" as={`/post/${p.id}`}>
                     <Link>
@@ -268,7 +267,6 @@ const Post = ({ postObj }) => {
                         //   disagreeHandler(ev);
                         // }}
                         ml={"auto"}
-                        mt={12}
                         fontSize={"sm"}
                         rounded={"full"}
                         bg={"blue.400"}

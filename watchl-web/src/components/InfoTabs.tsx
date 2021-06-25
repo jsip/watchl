@@ -5,13 +5,27 @@ import {
   TabPanels,
   TabPanel,
   GridItem,
+  Grid,
+  Box,
+  Heading,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+  StackDivider,
+  VStack,
+  Badge,
+  Flex,
+  Spacer,
 } from "@chakra-ui/react";
 import React from "react";
 import Chart from "react-google-charts";
 
 const InfoTabs = ({ ticker, size }) => {
-  let width;
-  size === "lg" ? (width = 800) : (width = 400);
+  let width, height;
+  size === "lg"
+    ? ((width = 800), (height = 500))
+    : ((width = 400), (height = 350));
   return (
     <Tabs variant="solid-rounded" isLazy={true} colorScheme="twitter">
       <TabList>
@@ -62,7 +76,7 @@ const InfoTabs = ({ ticker, size }) => {
       /> */}
             <Chart
               width={width}
-              height={350}
+              height={height}
               chartType="CandlestickChart"
               loader={<div>Loading Chart</div>}
               data={[
@@ -124,7 +138,7 @@ const InfoTabs = ({ ticker, size }) => {
           <GridItem>
             <Chart
               width={width}
-              height={350}
+              height={height}
               chartType="LineChart"
               loader={<div>Loading Chart</div>}
               data={[
@@ -173,6 +187,7 @@ const InfoTabs = ({ ticker, size }) => {
               ]}
               options={{
                 title: "Stock price displacement",
+                backgroundColor: "#f8fbff",
                 curveType: "function",
                 chartArea: {
                   width: "85%",
@@ -218,7 +233,103 @@ const InfoTabs = ({ ticker, size }) => {
           </GridItem>
         </TabPanel>
         <TabPanel>
-          <ul style={{ listStyle: "none" }}>
+          <Box mb={2}>
+            <Flex>
+              <Heading fontSize="lg" textAlign="left">
+                Social Sentiment
+              </Heading>
+              <Spacer />
+              <Badge colorScheme="green">Bullish 🐂</Badge>
+            </Flex>
+            <Slider aria-label="slider-ex-1" defaultValue={80}>
+              <SliderTrack>
+                <SliderFilledTrack bgColor="green.400" />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
+          </Box>
+          <Grid templateColumns={"repeat(2, 1fr)"} gap={2}>
+            <GridItem>
+              <Heading fontSize="md" textAlign="left" mb={4}>
+                Technical Catalysts
+              </Heading>
+              <Box>
+                <Chart
+                  width={width / 2}
+                  height={height / 1.3}
+                  chartType="BubbleChart"
+                  loader={<div>Loading Chart</div>}
+                  data={[
+                    ["ID", "X", "Y", "Temperature"],
+                    ["", 65, 167, 50],
+                    ["", 70, 136, 30],
+                    ["", 60, 477, 80],
+                  ]}
+                  options={{
+                    title: "Relative Volume",
+                    backgroundColor: "#f8fbff",
+                    colorAxis: { colors: ["yellow", "red"] },
+                    chartArea: {
+                      width: "75%",
+                      height: "75%",
+                    },
+                    vAxis: {
+                      gridlines: {
+                        color: "transparent",
+                      },
+                    },
+                    hAxis: {
+                      gridlines: {
+                        color: "transparent",
+                      },
+                    },
+                  }}
+                  rootProps={{ "data-testid": "2" }}
+                />
+              </Box>
+            </GridItem>
+            <GridItem>
+              <Heading fontSize="md" mb={4} textAlign="left">
+                Relevant News
+              </Heading>
+              <VStack spacing={6} align="stretch" textAlign="left">
+                <Box
+                  h="125px"
+                  shadow="md"
+                  borderWidth="2px"
+                  boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
+                  _hover={{
+                    borderColor: "blue.100",
+                  }}
+                  borderColor="blue.50"
+                  borderRadius="10px"
+                >
+                  1
+                </Box>
+              </VStack>
+              <VStack align="stretch" textAlign="left">
+                <Box>
+                  <Heading fontSize="md" mt={4} mb={4}>
+                    Recent SEC Filings
+                  </Heading>
+                  <Box
+                    h="50px"
+                    shadow="md"
+                    borderWidth="2px"
+                    boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
+                    _hover={{
+                      borderColor: "blue.100",
+                    }}
+                    borderColor="blue.50"
+                    borderRadius="10px"
+                  >
+                    2
+                  </Box>
+                </Box>
+              </VStack>
+            </GridItem>
+          </Grid>
+          {/* <ul style={{ listStyle: "none" }}>
             <li>Good News</li>
             <li>High Relative Volume</li>
             <li>Mergers & Acquisitions</li>
@@ -226,7 +337,7 @@ const InfoTabs = ({ ticker, size }) => {
             <li>Technical Alerts</li>
             <li>SEC Filings</li>
             <li>Social Sentiment</li>
-          </ul>
+          </ul> */}
         </TabPanel>
         <TabPanel>
           <ul style={{ listStyle: "none" }}>
