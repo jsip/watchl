@@ -60,7 +60,7 @@ const Sidebar = ({}) => {
               </NextLink>
             </li>
           </Stack>
-          <Stack spacing="6" mt="64" pt="64" align="stretch">
+          <Stack spacing="6" mt="64" pt="48" align="stretch">
             <li>
               <NextLink href="/">
                 <Link>

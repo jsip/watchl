@@ -2,6 +2,7 @@ import {
   Badge,
   Box,
   Button,
+  Code,
   Flex,
   Grid,
   GridItem,
@@ -427,19 +428,12 @@ const InfoTabs = ({ ticker, size }) => {
           </Heading>
           <VStack align="stretch" textAlign="left" mb={4}>
             <Flex>
-              {/* <ul style={{ listStyle: "none" }}>
-            <li>Asset Reproduction Value</li>
-            <li>Benjamin Graham Value</li>
-            <li>Earnings Power Value</li>
-            <li>P/E Growth Model</li>
-            <li>Discounted Cash Flow & Reversed DCF</li>
-            <li>Dividend Discount Model</li>
-            <li>Custom Fundamentals Analysis Model</li>
-          </ul> */}
               <Stat>
                 <StatLabel>Benjamin Graham Value</StatLabel>
                 <StatNumber>$32.45</StatNumber>
-                <StatHelpText>V = EPS × (8.5 + 2n) × 4.4</StatHelpText>
+                <StatHelpText>
+                  <Code color="black">V = EPS × (8.5 + 2n) × 4.4</Code>
+                </StatHelpText>
               </Stat>
               <Spacer />
               <Button colorScheme={"twitter"} mt={2} onClick={onOpen}>
@@ -456,7 +450,7 @@ const InfoTabs = ({ ticker, size }) => {
                   <ModalBody>
                     <RadioGroup defaultValue="1">
                       <Stack>
-                        <Radio value="1" >
+                        <Radio value="1">
                           <Text>Benjamin Graham Value</Text>
                         </Radio>
                         <Radio value="2">
