@@ -1,19 +1,31 @@
 import {
-  Flex,
   Badge,
-  Tooltip,
-  StatGroup,
+  Box,
+  Flex,
   Stat,
+  StatArrow,
+  StatGroup,
+  StatHelpText,
   StatLabel,
   StatNumber,
-  StatHelpText,
-  StatArrow,
+  Tooltip,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-export let ticker: String = "";
+interface TickerTapeProps {
+  tickers: string;
+  changeActiveTicker?: (arg: string) => string;
+}
 
-const TickerTape = ({ tickers }) => {
+const TickerTape: React.FC<TickerTapeProps> = ({
+  tickers,
+  changeActiveTicker,
+}) => {
+  const [activeTicker, setActiveTicker] = useState<string>("");
+  useEffect(() => {
+    setActiveTicker(activeTicker);
+  }, [activeTicker]);
+
   return (
     <Flex alignContent="right">
       {tickers.split(" ").map((tickr): any => {
@@ -26,7 +38,7 @@ const TickerTape = ({ tickers }) => {
               cursor: "pointer",
             }}
             onClick={() => {
-              ticker = tickr;
+              changeActiveTicker(tickr);
             }}
             key={`${tickr}`}
           >

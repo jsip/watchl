@@ -45,6 +45,15 @@ const Sidebar = ({}) => {
               <NextLink href="/">
                 <Link>
                   <Heading size="md" color="#2D3748">
+                    Groups
+                  </Heading>
+                </Link>
+              </NextLink>
+            </li>
+            <li>
+              <NextLink href="/">
+                <Link>
+                  <Heading size="md" color="#2D3748">
                     Social Display
                   </Heading>
                 </Link>

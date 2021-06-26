@@ -1,31 +1,65 @@
 import {
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-  GridItem,
-  Grid,
+  Badge,
   Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
   Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Radio,
+  RadioGroup,
   Slider,
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
-  StackDivider,
-  VStack,
-  Badge,
-  Flex,
   Spacer,
+  Stack,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  Tab,
+  Table,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Chart from "react-google-charts";
 
 const InfoTabs = ({ ticker, size }) => {
   let width, height;
   size === "lg"
-    ? ((width = 800), (height = 500))
-    : ((width = 400), (height = 350));
+    ? ((width = 900), (height = 500))
+    : ((width = 500), (height = 350));
+  let sentimentVal = Math.random() * 100;
+
+  const [sentimentValue, setSentimentValue] = useState(sentimentVal);
+
+  const changeSentimentValue = (newVal) => {
+    setSentimentValue(newVal);
+  };
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {}, [sentimentValue]);
   return (
     <Tabs variant="solid-rounded" isLazy={true} colorScheme="twitter">
       <TabList>
@@ -35,6 +69,7 @@ const InfoTabs = ({ ticker, size }) => {
           _hover={{
             bg: "blue.500",
           }}
+          mr={2}
         >
           <b>Chart</b>
         </Tab>
@@ -44,6 +79,7 @@ const InfoTabs = ({ ticker, size }) => {
           _hover={{
             bg: "blue.500",
           }}
+          mr={2}
         >
           <b>Technicals</b>
         </Tab>
@@ -53,6 +89,7 @@ const InfoTabs = ({ ticker, size }) => {
           _hover={{
             bg: "blue.500",
           }}
+          mr={2}
         >
           <b>Catalysts</b>
         </Tab>
@@ -62,13 +99,14 @@ const InfoTabs = ({ ticker, size }) => {
           _hover={{
             bg: "blue.500",
           }}
+          mr={2}
         >
           <b>Fundamentals</b>
         </Tab>
       </TabList>
 
       <TabPanels>
-        <TabPanel>
+        <TabPanel p={2}>
           <GridItem>
             {/* <img
         src="https://i.gyazo.com/6fbfea9f2352b16610cb5c2e88f4481a.png"
@@ -132,9 +170,41 @@ const InfoTabs = ({ ticker, size }) => {
                 },
               }}
             />
+            <Flex>
+              <Badge
+                colorScheme="orange"
+                mr={2}
+                _hover={{
+                  color: "orange.700",
+                  cursor: "pointer",
+                }}
+              >
+                13 EMA <b style={{ fontWeight: 800 }}>33.17$</b>
+              </Badge>
+              <Badge
+                colorScheme="green"
+                mr={2}
+                _hover={{
+                  color: "green.700",
+                  cursor: "pointer",
+                }}
+              >
+                20 EMA <b style={{ fontWeight: 800 }}>31.75$</b>
+              </Badge>
+              <Badge
+                colorScheme="purple"
+                mr={2}
+                _hover={{
+                  color: "purple.700",
+                  cursor: "pointer",
+                }}
+              >
+                50 EMA <b style={{ fontWeight: 800 }}>29.33$</b>
+              </Badge>
+            </Flex>
           </GridItem>
         </TabPanel>
-        <TabPanel>
+        <TabPanel p={2}>
           <GridItem>
             <Chart
               width={width}
@@ -177,8 +247,8 @@ const InfoTabs = ({ ticker, size }) => {
                   },
                 ],
                 [1, 100, 90, 110, 85, 96, 104, 120],
-                [2, 120, 95, 130, 90, 113, 124, 140],
-                [3, 130, 105, 140, 100, 117, 133, 139],
+                [2, 120, 95, 130, 90, 113, 124, 130],
+                [3, 130, 105, 131, 100, 117, 133, 133],
                 [4, 90, 85, 95, 85, 88, 92, 95],
                 [5, 70, 74, 63, 67, 69, 70, 72],
                 [6, 30, 39, 22, 21, 28, 34, 40],
@@ -186,7 +256,7 @@ const InfoTabs = ({ ticker, size }) => {
                 [8, 100, 90, 110, 85, 95, 102, 110],
               ]}
               options={{
-                title: "Stock price displacement",
+                title: `${ticker} price displacement`,
                 backgroundColor: "#f8fbff",
                 curveType: "function",
                 chartArea: {
@@ -209,16 +279,16 @@ const InfoTabs = ({ ticker, size }) => {
                     color: "#4374E0",
                     style: "bars",
                     barWidth: 0,
-                    lineWidth: 4,
-                    pointSize: 10,
+                    lineWidth: 0,
+                    pointSize: 0,
                     fillOpacity: 1,
                   },
                   i1: {
                     color: "#E49307",
                     style: "bars",
                     barWidth: 0,
-                    lineWidth: 4,
-                    pointSize: 10,
+                    lineWidth: 0,
+                    pointSize: 0,
                     fillOpacity: 1,
                   },
                   i2: {
@@ -239,52 +309,57 @@ const InfoTabs = ({ ticker, size }) => {
                 Social Sentiment
               </Heading>
               <Spacer />
-              <Badge colorScheme="green">Bullish 🐂</Badge>
+              <Badge colorScheme={sentimentValue > 50 ? `green` : `red`}>
+                {sentimentValue > 50 ? `Bullish 🐂` : `Bearish 🌈🐻`}
+              </Badge>
             </Flex>
-            <Slider aria-label="slider-ex-1" defaultValue={80}>
+            <Slider
+              aria-label="slider-ex-1"
+              defaultValue={sentimentValue}
+              onChangeEnd={(val) => changeSentimentValue(val)}
+            >
               <SliderTrack>
-                <SliderFilledTrack bgColor="green.400" />
+                <SliderFilledTrack
+                  bgColor={sentimentValue > 50 ? `green` : `red`}
+                />
               </SliderTrack>
               <SliderThumb />
             </Slider>
           </Box>
-          <Grid templateColumns={"repeat(2, 1fr)"} gap={2}>
+          <Grid templateColumns={"repeat(2, 1fr)"} gap={6}>
             <GridItem>
               <Heading fontSize="md" textAlign="left" mb={4}>
                 Technical Catalysts
               </Heading>
               <Box>
                 <Chart
-                  width={width / 2}
-                  height={height / 1.3}
-                  chartType="BubbleChart"
+                  width={width / 1.8}
+                  height={height / 1.5}
+                  chartType="PieChart"
                   loader={<div>Loading Chart</div>}
                   data={[
-                    ["ID", "X", "Y", "Temperature"],
-                    ["", 65, 167, 50],
-                    ["", 70, 136, 30],
-                    ["", 60, 477, 80],
+                    ["Volume", "Relative Volume"],
+                    ["3 Day Average", 4.85],
+                    ["6 Day Average", 2.66],
+                    ["20 Day Average", 1.516],
+                    ["1 Month Average", 1.391],
                   ]}
                   options={{
-                    title: "Relative Volume",
+                    legend: "none",
                     backgroundColor: "#f8fbff",
-                    colorAxis: { colors: ["yellow", "red"] },
                     chartArea: {
-                      width: "75%",
+                      width: "85%",
                       height: "75%",
                     },
-                    vAxis: {
-                      gridlines: {
-                        color: "transparent",
-                      },
-                    },
-                    hAxis: {
-                      gridlines: {
-                        color: "transparent",
-                      },
+                    pieSliceText: "label",
+                    slices: {
+                      1: { color: "#4299E1" },
+                      2: { color: "#83BDEC" },
+                      3: { color: "#B8D9F4" },
+                      4: { color: "#2183D4" },
                     },
                   }}
-                  rootProps={{ "data-testid": "2" }}
+                  rootProps={{ "data-testid": "4" }}
                 />
               </Box>
             </GridItem>
@@ -294,7 +369,7 @@ const InfoTabs = ({ ticker, size }) => {
               </Heading>
               <VStack spacing={6} align="stretch" textAlign="left">
                 <Box
-                  h="125px"
+                  h="auto"
                   shadow="md"
                   borderWidth="2px"
                   boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
@@ -303,17 +378,27 @@ const InfoTabs = ({ ticker, size }) => {
                   }}
                   borderColor="blue.50"
                   borderRadius="10px"
+                  p={2}
+                  color="gray.800"
+                  lineHeight={1.6}
                 >
-                  1
+                  <Heading fontSize="md">{ticker}: Q1 Blowout</Heading>
+                  <Text fontSize="x-small" color="gray.500">
+                    <b>Reuters</b>
+                  </Text>
+                  <Text fontSize="small">
+                    Avg YoY Rev Growth: <b>[82%]</b>. Is this growth
+                    sustainable?
+                  </Text>
                 </Box>
               </VStack>
-              <VStack align="stretch" textAlign="left">
+              <VStack align="stretch" textAlign="left" mb={4}>
                 <Box>
                   <Heading fontSize="md" mt={4} mb={4}>
                     Recent SEC Filings
                   </Heading>
                   <Box
-                    h="50px"
+                    h="auto"
                     shadow="md"
                     borderWidth="2px"
                     boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
@@ -322,25 +407,27 @@ const InfoTabs = ({ ticker, size }) => {
                     }}
                     borderColor="blue.50"
                     borderRadius="10px"
+                    p={2}
+                    color="gray.900"
                   >
-                    2
+                    <Heading fontSize="md">
+                      <Text fontSize="small" lineHeight={1.6}>
+                        {ticker}: 8-K/Current Report
+                      </Text>
+                    </Heading>
                   </Box>
                 </Box>
               </VStack>
             </GridItem>
           </Grid>
-          {/* <ul style={{ listStyle: "none" }}>
-            <li>Good News</li>
-            <li>High Relative Volume</li>
-            <li>Mergers & Acquisitions</li>
-            <li>Uplists</li>
-            <li>Technical Alerts</li>
-            <li>SEC Filings</li>
-            <li>Social Sentiment</li>
-          </ul> */}
         </TabPanel>
         <TabPanel>
-          <ul style={{ listStyle: "none" }}>
+          <Heading fontSize="lg" textAlign="left" mb={2}>
+            Key Fundamentals for {ticker}
+          </Heading>
+          <VStack align="stretch" textAlign="left" mb={4}>
+            <Flex>
+              {/* <ul style={{ listStyle: "none" }}>
             <li>Asset Reproduction Value</li>
             <li>Benjamin Graham Value</li>
             <li>Earnings Power Value</li>
@@ -348,7 +435,226 @@ const InfoTabs = ({ ticker, size }) => {
             <li>Discounted Cash Flow & Reversed DCF</li>
             <li>Dividend Discount Model</li>
             <li>Custom Fundamentals Analysis Model</li>
-          </ul>
+          </ul> */}
+              <Stat>
+                <StatLabel>Benjamin Graham Value</StatLabel>
+                <StatNumber>$32.45</StatNumber>
+                <StatHelpText>V = EPS × (8.5 + 2n) × 4.4</StatHelpText>
+              </Stat>
+              <Spacer />
+              <Button colorScheme={"twitter"} mt={2} onClick={onOpen}>
+                Choose Formula
+              </Button>
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent
+                  colorScheme={"whiteAlpha"}
+                  backgroundColor="white"
+                >
+                  <ModalHeader>Choose a valuation formula.</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <RadioGroup defaultValue="1">
+                      <Stack>
+                        <Radio value="1" >
+                          <Text>Benjamin Graham Value</Text>
+                        </Radio>
+                        <Radio value="2">
+                          <Text>Asset Reproduction Value</Text>
+                        </Radio>
+                        <Radio value="3">
+                          <Text>Earnings Power Value</Text>
+                        </Radio>
+                        <Radio value="4">
+                          <Text>P/E Growth Model</Text>
+                        </Radio>
+                        <Radio value="5">
+                          <Text>Discounted Cash Flow & Reversed DCF</Text>
+                        </Radio>
+                        <Radio value="6">
+                          <Text>Dividend Discount Model</Text>
+                        </Radio>
+                        <Radio value="7">
+                          <Text>Custom Fundamentals Analysis Model</Text>
+                        </Radio>
+                      </Stack>
+                    </RadioGroup>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button colorScheme="red" mr={3} onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="solid" colorScheme="blue">
+                      Confirm
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </Flex>
+          </VStack>
+          <Tabs variant="unstyled">
+            <TabList>
+              <Tab
+                borderWidth="0px"
+                borderRadius="15px"
+                color="gray.600"
+                _hover={{
+                  bg: "blue.500",
+                }}
+                mr={2}
+              >
+                <Text fontSize="small" lineHeight={1.6}>
+                  Income Statement
+                </Text>
+              </Tab>
+              <Tab
+                borderWidth="0px"
+                borderRadius="15px"
+                color="gray.600"
+                _hover={{
+                  bg: "blue.500",
+                }}
+                mr={2}
+              >
+                <Text fontSize="small" lineHeight={1.6}>
+                  Balance Sheet
+                </Text>
+              </Tab>
+              <Tab
+                borderWidth="0px"
+                borderRadius="15px"
+                color="gray.600"
+                _hover={{
+                  bg: "blue.500",
+                }}
+                mr={2}
+              >
+                <Text fontSize="small" lineHeight={1.6}>
+                  Cash Flow Statement
+                </Text>
+              </Tab>
+            </TabList>
+
+            <TabPanels>
+              <TabPanel>
+                <Table size="sm" textAlign="left" colorScheme={"whiteAlpha"}>
+                  <Thead>
+                    <Tr>
+                      <Th>Revenue</Th>
+                      <Th>Net Income</Th>
+                      <Th isNumeric>Diluted EPS</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody textAlign="left">
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2018</Th>
+                    </Tr>
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2019</Th>
+                    </Tr>
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2020</Th>
+                    </Tr>
+                  </Tbody>
+                  <Tfoot>
+                    <Tr>
+                      <Th>44%</Th>
+                      <Th>44%</Th>
+                      <Th>14%</Th>
+                      <Th isNumeric>YoY Growth</Th>
+                    </Tr>
+                  </Tfoot>
+                </Table>
+              </TabPanel>
+              <TabPanel>
+                <Table size="sm" textAlign="left" colorScheme={"whiteAlpha"}>
+                  <Thead>
+                    <Tr>
+                      <Th>Assets</Th>
+                      <Th>Total Debt</Th>
+                      <Th isNumeric>Cash</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody textAlign="left">
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2018</Th>
+                    </Tr>
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2019</Th>
+                    </Tr>
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2020</Th>
+                    </Tr>
+                  </Tbody>
+                  <Tfoot>
+                    <Tr>
+                      <Th>44%</Th>
+                      <Th>44%</Th>
+                      <Th>14%</Th>
+                      <Th isNumeric>YoY Growth</Th>
+                    </Tr>
+                  </Tfoot>
+                </Table>
+              </TabPanel>
+              <TabPanel>
+                <Table size="sm" textAlign="left" colorScheme={"whiteAlpha"}>
+                  <Thead>
+                    <Tr>
+                      <Th>Operating</Th>
+                      <Th>Investing</Th>
+                      <Th isNumeric>FCF</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody textAlign="left">
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2018</Th>
+                    </Tr>
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2019</Th>
+                    </Tr>
+                    <Tr>
+                      <Td>1.6B</Td>
+                      <Td>800M</Td>
+                      <Td isNumeric>15.45$</Td>
+                      <Th isNumeric>2020</Th>
+                    </Tr>
+                  </Tbody>
+                  <Tfoot>
+                    <Tr>
+                      <Th>44%</Th>
+                      <Th>44%</Th>
+                      <Th>14%</Th>
+                      <Th isNumeric>YoY Growth</Th>
+                    </Tr>
+                  </Tfoot>
+                </Table>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </TabPanel>
       </TabPanels>
     </Tabs>

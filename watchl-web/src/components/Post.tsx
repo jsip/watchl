@@ -8,25 +8,25 @@ import {
   Grid,
   GridItem,
   Heading,
-  Link, Text,
-  Tooltip
+  Link,
+  Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { default as React, useEffect, useState } from "react";
-import {
-  Post as PostType, usePostsQuery
-} from "../generated/graphql";
+import { Post as PostType, usePostsQuery } from "../generated/graphql";
 import { DisAgree } from "./DisAgree";
 import InfoTabs from "./InfoTabs";
 import PostOpts from "./PostOpts";
-import TickerTape, { ticker } from "./TickerTape";
+import TickerTape from "./TickerTape";
 
 const Post = ({ postObj }) => {
-  let postHeight = "30rem";
-  let postHeightier = "30rem";
+  let postHeight = "32rem";
+  let postHeightier = "32rem";
   let contentSnippetLength = 150;
   let contentSnippetLengthier = 550;
   let voteBool = false;
+  let ticker = "";
 
   const [variables, setVariables] = useState({
     limit: 15,
@@ -46,6 +46,7 @@ const Post = ({ postObj }) => {
   const [snippetLengthState, setSnippetLengthState] = useState(
     contentSnippetLength
   );
+  const [activeTicker, setActiveTicker] = useState(ticker);
 
   const disagreeHandler = (e: any) => {
     console.log(e);
@@ -60,7 +61,18 @@ const Post = ({ postObj }) => {
     );
   };
 
-  useEffect(() => {}, [displayVoteState, postHeightState, snippetLengthState]);
+  const changeActiveTicker = (newTicker) => {
+    setActiveTicker(newTicker);
+    return newTicker;
+  };
+
+  useEffect(() => {}, [
+    displayVoteState,
+    postHeightState,
+    snippetLengthState,
+    activeTicker,
+  ]);
+
   return postObj.map((p: PostType) =>
     !p ? null : (
       <Box
@@ -78,7 +90,7 @@ const Post = ({ postObj }) => {
         maxHeight={postHeightState}
       >
         <Grid
-          templateColumns="repeat(2, 1fr)"
+          templateColumns="45% 55%"
           h={postHeightState}
           minHeight={postHeightState}
           maxHeight={postHeightState}
@@ -91,7 +103,7 @@ const Post = ({ postObj }) => {
               maxHeight={postHeightState}
             >
               <GridItem rowStart={1} rowEnd={1}>
-                <TickerTape tickers={p.tickers} />
+                <TickerTape tickers={p.tickers} changeActiveTicker={changeActiveTicker}/>
               </GridItem>
               <GridItem rowStart={2} rowEnd={3}>
                 <Box>
@@ -255,8 +267,14 @@ const Post = ({ postObj }) => {
               minHeight={postHeightState}
               maxHeight={postHeightState}
             >
-              <GridItem rowStart={1} rowEnd={10} textAlign="center" fontSize="2xl" pt={3}>
-                <InfoTabs ticker={ticker} size={""} />
+              <GridItem
+                rowStart={1}
+                rowEnd={10}
+                textAlign="center"
+                fontSize="2xl"
+                pt={3}
+              >
+                <InfoTabs ticker={activeTicker} size={""} />
               </GridItem>
               <GridItem p={6} rowStart={12} rowEnd={12}>
                 <Flex justify="flex-end">
