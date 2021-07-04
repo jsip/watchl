@@ -10,6 +10,7 @@ import {
   Query,
   FieldResolver,
   Root,
+  Int,
 } from "type-graphql";
 import argon2 from "argon2";
 import { COOKIE_NAME, FORGOT_PASSWD_PREFIX } from "../constants";
@@ -38,8 +39,6 @@ class UserResponse {
 
 @Resolver(User)
 export class UserResolver {
-
-  
   @FieldResolver(() => String)
   email(@Root() user: User, @Ctx() { req }: MainContext) {
     if (req.session.userId === user.id) {
@@ -137,6 +136,13 @@ export class UserResolver {
       return null;
     }
     return await User.findOne({ id: req.session.userId });
+  }
+
+  @Query(() => User, { nullable: true })
+  async user(
+    @Arg("username", () => String) username: string
+  ): Promise<User | undefined> {
+    return await User.findOne({ where: { username } });
   }
 
   @Mutation(() => UserResponse)

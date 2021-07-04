@@ -60,7 +60,11 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
     navbar = (
       <Flex align="center">
         <Box mr={4}>
-          <b>{data.me.username}</b>
+          <NextLink href="/user/[username]" as={`/user/${data.me.username}`}>
+            <Link>
+              <b>{data.me.username}</b>
+            </Link>
+          </NextLink>
         </Box>
         <Button
           onClick={async () => {

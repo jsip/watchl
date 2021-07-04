@@ -118,6 +118,7 @@ export class PostResolver {
   async posts(
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+    @Arg("creatorId", () => Int, { nullable: true }) creatorId: number,
     @Ctx() { req }: MainContext
   ): Promise<PaginatedPosts> {
     const _limit = Math.min(50, limit);
@@ -129,13 +130,29 @@ export class PostResolver {
       replacements.push(new Date(parseInt(cursor)));
     }
 
+    console.log("creatorid", creatorId);
+
+    if (creatorId) {
+      console.log("creatorid", creatorId);
+      replacements.push(creatorId);
+    }
+
     console.log("sessid", req.session.userId);
+
+    console.log(replacements);
 
     const posts = await getConnection().query(
       `
       SELECT p.*
       FROM post p
       ${cursor ? `WHERE p."createdAt" < $2` : ""}
+      ${
+        creatorId
+          ? cursor
+            ? `AND p."creatorId" = $3`
+            : `WHERE p."creatorId" = $2`
+          : ""
+      }
       ORDER by p."createdAt" DESC
       LIMIT $1
     `,
@@ -188,6 +205,7 @@ export class PostResolver {
     return response.raw[0];
   }
 
+  // ajouter un toast pop up sur le front end
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deletePost(

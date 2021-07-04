@@ -17,7 +17,7 @@ import { createUrqlclient } from "../utils/createUrqlClient";
 
 const Index = () => {
   const [variables, setVariables] = useState({
-    limit: 15,
+    limit: 25,
     cursor: null as null | string,
   });
 
@@ -25,20 +25,24 @@ const Index = () => {
     variables,
   });
 
-  if (!fetching && !data) {
+  console.log(data, error, fetching);
+
+  if (fetching) {
+    return <div>Fetching posts..</div>;
+  }
+
+  if (error && !fetching) {
     return (
-      <div style={{ textAlign: "center" }}>
-        No posts were found ☹
+      <div>
+        Error msg: {error.message}
         <br />
-        <br />
-        <br />
-        <div>
-          Error msg: {error?.message}
-          <br />
-          Error stack: {error?.stack || "No stack trace"}
-        </div>
+        Error stack: {error?.stack || "No stack trace"}
       </div>
     );
+  }
+
+  if (!fetching && data.posts.posts.length === 0 && !error) {
+    return <div style={{ textAlign: "center" }}>No posts were found 😟</div>;
   }
 
   return (
@@ -124,16 +128,14 @@ const Index = () => {
       <br />
       <br />
       <br />
-      {fetching && !data ? (
-        <div>
-          <h3>Looking for posts...</h3>
-        </div>
-      ) : (
+      {data!.posts ? (
         <Stack spacing={12}>
-          <Post postObj={data.posts.posts} />
+          <Post postObj={data.posts} />
         </Stack>
+      ) : (
+        <Box>No posts have been publicly published yet 😟</Box>
       )}
-      {data && data.posts.hasMore ? (
+      {data.posts && data.posts.hasMore ? (
         <Box textAlign={"center"}>
           <Button
             onClick={() => {

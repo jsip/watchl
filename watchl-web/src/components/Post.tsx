@@ -19,102 +19,74 @@ import { DisAgree } from "./DisAgree";
 import InfoTabs from "./InfoTabs";
 import PostOpts from "./PostOpts";
 import TickerTape from "./TickerTape";
+import useLocalStorage from "../utils/useLocalStorage";
 
-const Post = ({ postObj }) => {
-  let postHeight = "32rem";
-  let postHeightier = "32rem";
-  let contentSnippetLength = 150;
-  let contentSnippetLengthier = 550;
-  let voteBool = false;
-  let ticker = "";
+interface PostProps {
+  postObj?: any;
+  creatorId?: number;
+}
+
+const Post: React.FC<PostProps> = ({ postObj, creatorId }) => {
+  console.log(postObj, creatorId);
+  const [localStorageTicker, setLocalStorageTicker] = useLocalStorage<String>(
+    "ticker"
+  );
+
+  let ticker = localStorageTicker
+    ? localStorageTicker
+    : "Select a ticker to view data -";
 
   const [variables, setVariables] = useState({
-    limit: 15,
+    limit: 25,
     cursor: null as null | string,
+    creatorId: creatorId || null,
   });
 
-  const [{ data, fetching }] = usePostsQuery({
+  const [{ data, error, fetching }] = usePostsQuery({
     variables,
   });
 
-  if (!fetching && !data) {
-    return <div>No posts were found ☹</div>;
-  }
-
-  const [displayVoteState, setDisplayVoteState] = useState(voteBool);
-  const [postHeightState, setPostHeightState] = useState(postHeight);
-  const [snippetLengthState, setSnippetLengthState] = useState(
-    contentSnippetLength
-  );
   const [activeTicker, setActiveTicker] = useState(ticker);
 
-  const disagreeHandler = (e: any) => {
-    console.log(e);
-    setDisplayVoteState((current) => !current);
-    setPostHeightState((current) =>
-      current == postHeight ? (current = postHeightier) : (current = postHeight)
-    );
-    setSnippetLengthState((current) =>
-      current == contentSnippetLength
-        ? (current = contentSnippetLengthier)
-        : (current = contentSnippetLength)
-    );
-  };
-
   const changeActiveTicker = (newTicker) => {
+    setLocalStorageTicker(newTicker);
     setActiveTicker(newTicker);
     return newTicker;
   };
 
-  useEffect(() => {}, [
-    displayVoteState,
-    postHeightState,
-    snippetLengthState,
-    activeTicker,
-  ]);
+  useEffect(() => {}, [activeTicker]);
 
-  return postObj.map((p: PostType) =>
+  const post = data.posts.posts.map((p: PostType) =>
     !p ? null : (
       <Box
         key={p.id}
-        shadow="md"
+        // shadow="md"
         borderWidth="5px"
-        boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
+        // boxShadow={"1px 0px 15px -5px rgb(66 153 225 / 50%)"}
         _hover={{
           borderColor: "blue.100",
         }}
         borderColor="blue.50"
         borderRadius="25px"
-        h={postHeightState}
-        minHeight={postHeightState}
-        maxHeight={postHeightState}
+        h={"32rem"}
+        minHeight={"32rem"}
+        maxHeight={"32rem"}
       >
         <Grid
           templateColumns="45% 55%"
-          h={postHeightState}
-          minHeight={postHeightState}
-          maxHeight={postHeightState}
+          h={"32rem"}
+          minHeight={"32rem"}
+          maxHeight={"32rem"}
         >
           <GridItem>
-            <Grid
-              p={6}
-              h={postHeightState}
-              minHeight={postHeightState}
-              maxHeight={postHeightState}
-            >
+            <Grid p={6} h={"32rem"} minHeight={"32rem"} maxHeight={"32rem"}>
               <GridItem rowStart={1} rowEnd={1}>
-                <TickerTape tickers={p.tickers} changeActiveTicker={changeActiveTicker}/>
+                <TickerTape
+                  tickers={p.tickers}
+                  changeActiveTicker={changeActiveTicker}
+                />
               </GridItem>
               <GridItem rowStart={2} rowEnd={3}>
-                <Box>
-                  {displayVoteState ? (
-                    <Fade in={displayVoteState}>
-                      <DisAgree post={p} />
-                    </Fade>
-                  ) : (
-                    ""
-                  )}
-                </Box>
                 <NextLink href="/post/[id]" as={`/post/${p.id}`}>
                   <Link>
                     <Heading
@@ -148,7 +120,12 @@ const Post = ({ postObj }) => {
                       cursor: "pointer",
                     }}
                   >
-                    By {p.creator.username}{" "}
+                    <NextLink
+                      href="/user/[username]"
+                      as={`/user/${p.creator.username}`}
+                    >
+                      <Link>By {p.creator.username} </Link>
+                    </NextLink>
                     <ChevronRightIcon ml={0} w={4} h={4} />
                   </Heading>
                 </Tooltip>
@@ -156,7 +133,7 @@ const Post = ({ postObj }) => {
               <GridItem rowStart={3} rowEnd={6} mt={2}>
                 <Text>
                   {p.contentSnippet}
-                  {p.contentSnippet.length < snippetLengthState ? "" : "..."}
+                  {p.contentSnippet.length < 150 ? "" : "..."}
                 </Text>
               </GridItem>
               <GridItem rowStart={6} rowEnd={10}>
@@ -175,15 +152,15 @@ const Post = ({ postObj }) => {
                       <Tooltip
                         hasArrow
                         label={`
-																	Industrials // 
-																	Value Companies // 
-																	Cyclical & Volatile Cash Flow Unicorns // 
-																	Growth Companies // 
-																	Strong, Predictable Cash Flows
-																		- Pricing in Market Expectations // 
-																	Cash Cows and Dividend Payers // 
-																	Timeframe // 
-																	Technical Alerts
+Industrials // 
+Value Companies // 
+Cyclical & Volatile Cash Flow Unicorns // 
+Growth Companies // 
+Strong, Predictable Cash Flows
+  - Pricing in Market Expectations // 
+Cash Cows and Dividend Payers // 
+Timeframe // 
+Technical Alerts
 																`}
                         bg="white"
                         color="black"
@@ -263,9 +240,9 @@ const Post = ({ postObj }) => {
           <GridItem>
             <Grid
               templateRows="repeat(12, 1fr)"
-              h={postHeightState}
-              minHeight={postHeightState}
-              maxHeight={postHeightState}
+              h={"32rem"}
+              minHeight={"32rem"}
+              maxHeight={"32rem"}
             >
               <GridItem
                 rowStart={1}
@@ -311,6 +288,7 @@ const Post = ({ postObj }) => {
       </Box>
     )
   );
+  return <>{post}</>;
 };
 
 export default Post;

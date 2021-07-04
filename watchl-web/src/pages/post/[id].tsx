@@ -4,6 +4,7 @@ import {
   Box,
   Flex,
   Heading,
+  Link,
   Spacer,
   Textarea,
   Tooltip,
@@ -17,13 +18,18 @@ import PostOpts from "../../components/PostOpts";
 import TickerTape from "../../components/TickerTape";
 import { createUrqlclient } from "../../utils/createUrqlClient";
 import { useGetUrlPost } from "../../utils/useGetUrlPost";
+import useLocalStorage from "../../utils/useLocalStorage";
+import NextLink from "next/link";
 
 const Post = () => {
-  
+  const [localStorageTicker, setLocalStorageTicker] = useLocalStorage("ticker");
   const [{ data, error, fetching }] = useGetUrlPost();
-  const [activeTicker, setActiveTicker] = useState<string>("");
+  const [activeTicker, setActiveTicker] = useState<string>(
+    localStorageTicker as string
+  );
 
   const changeActiveTicker = (newTicker: string): string => {
+    setLocalStorageTicker(newTicker);
     setActiveTicker(newTicker);
     return activeTicker;
   };
@@ -54,9 +60,9 @@ const Post = () => {
   return (
     <Layout>
       <Box
-        shadow="md"
+        // shadow="md"
         borderWidth="5px"
-        boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
+        // boxShadow={"0px 1px 25px -5px rgb(66 153 225 / 50%)"}
         _hover={{
           borderColor: "blue.100",
         }}
@@ -89,7 +95,12 @@ const Post = () => {
                   cursor: "pointer",
                 }}
               >
-                By {data.post.creator.username}{" "}
+                <NextLink
+                  href="/user/[username]"
+                  as={`/user/${data.post.creator.username}`}
+                >
+                  <Link>By {data.post.creator.username} </Link>
+                </NextLink>
                 <ChevronRightIcon ml={0} w={4} h={4} />
               </Heading>
             </Tooltip>
@@ -208,7 +219,7 @@ const Post = () => {
           </Flex>
         </Box>
         <br />
-        <>{data.post.content}</>
+        <pre>{data.post.content}</pre>
         <Box margin="auto" mt={12}>
           <InfoTabs ticker={activeTicker} size={"lg"} />
         </Box>

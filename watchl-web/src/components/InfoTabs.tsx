@@ -107,12 +107,13 @@ const InfoTabs = ({ ticker, size }) => {
       </TabList>
 
       <TabPanels>
-        <TabPanel p={2}>
-          <GridItem>
-            {/* <img
-        src="https://i.gyazo.com/6fbfea9f2352b16610cb5c2e88f4481a.png"
-        alt=""
-      /> */}
+        <TabPanel>
+          <Box>
+            <Flex>
+              <Heading fontSize="lg" textAlign="left">
+                Price action
+              </Heading>
+            </Flex>
             <Chart
               width={width}
               height={height}
@@ -141,7 +142,7 @@ const InfoTabs = ({ ticker, size }) => {
                 ["09", 125, 130, 120, 115],
               ]}
               options={{
-                title: `${ticker} Price action`,
+                title: `${ticker} YTD`,
                 legend: "none",
                 bar: { groupWidth: "85%" },
                 chartArea: {
@@ -203,13 +204,79 @@ const InfoTabs = ({ ticker, size }) => {
                 50 EMA <b style={{ fontWeight: 800 }}>29.33$</b>
               </Badge>
             </Flex>
-          </GridItem>
+          </Box>
         </TabPanel>
-        <TabPanel p={2}>
-          <GridItem>
+        <TabPanel>
+          <Box>
+            <Flex>
+              <Heading fontSize="lg" textAlign="left" mb={4}>
+                Technical Studies Group
+              </Heading>
+            </Flex>
             <Chart
               width={width}
-              height={height}
+              height={height / 2.5}
+              style={{ marginBottom: "1rem" }}
+              chartType="LineChart"
+              loader={<div>Loading Chart</div>}
+              data={[
+                ["Period", "RSI"],
+                [1, 35],
+                [2, 31],
+                [3, 29],
+                [4, 33],
+                [5, 37],
+                [6, 35],
+                [7, 39],
+                [8, 40],
+                [9, 38],
+                [10, 44],
+                [11, 49],
+                [12, 45],
+                [13, 38],
+                [14, 40],
+                [15, 49],
+                [16, 51],
+                [17, 48],
+                [18, 55],
+                [19, 56],
+                [20, 56],
+                [21, 52],
+                [22, 54],
+                [23, 57],
+                [24, 61],
+                [25, 68],
+                [26, 64],
+                [27, 61],
+                [28, 62],
+                [29, 63],
+                [30, 68],
+              ]}
+              options={{
+                title: `${ticker} RSI`,
+                backgroundColor: "#f8fbff",
+                colors: ["#FF0000"],
+                curveType: "function",
+                chartArea: {
+                  width: "85%",
+                  height: "75%",
+                },
+                vAxis: {
+                  gridlines: {
+                    color: "transparent",
+                  },
+                },
+                hAxis: {
+                  gridlines: {
+                    color: "transparent",
+                  },
+                },
+                legend: "none",
+              }}
+            />
+            <Chart
+              width={width}
+              height={height / 2.5}
               chartType="LineChart"
               loader={<div>Loading Chart</div>}
               data={[
@@ -257,7 +324,7 @@ const InfoTabs = ({ ticker, size }) => {
                 [8, 100, 90, 110, 85, 95, 102, 110],
               ]}
               options={{
-                title: `${ticker} price displacement`,
+                title: `${ticker} Keltner Channels`,
                 backgroundColor: "#f8fbff",
                 curveType: "function",
                 chartArea: {
@@ -301,7 +368,7 @@ const InfoTabs = ({ ticker, size }) => {
                 legend: "none",
               }}
             />
-          </GridItem>
+          </Box>
         </TabPanel>
         <TabPanel>
           <Box mb={2}>
@@ -383,7 +450,7 @@ const InfoTabs = ({ ticker, size }) => {
                   color="gray.800"
                   lineHeight={1.6}
                 >
-                  <Heading fontSize="md">{ticker}: Q1 Blowout</Heading>
+                  <Heading fontSize="md">{ticker} Q1 Blowout</Heading>
                   <Text fontSize="x-small" color="gray.500">
                     <b>Reuters</b>
                   </Text>
@@ -413,7 +480,7 @@ const InfoTabs = ({ ticker, size }) => {
                   >
                     <Heading fontSize="md">
                       <Text fontSize="small" lineHeight={1.6}>
-                        {ticker}: 8-K/Current Report
+                        {ticker} 8-K/Current Report
                       </Text>
                     </Heading>
                   </Box>
@@ -424,7 +491,9 @@ const InfoTabs = ({ ticker, size }) => {
         </TabPanel>
         <TabPanel>
           <Heading fontSize="lg" textAlign="left" mb={2}>
-            Key Fundamentals for {ticker}
+            {ticker === "Select a ticker to view data - "
+              ? "Select a ticker to view data"
+              : "Key Fundamentals for " + ticker}
           </Heading>
           <VStack align="stretch" textAlign="left" mb={4}>
             <Flex>
@@ -432,9 +501,14 @@ const InfoTabs = ({ ticker, size }) => {
                 <StatLabel>Benjamin Graham Value</StatLabel>
                 <StatNumber>$32.45</StatNumber>
                 <StatHelpText>
-                  <Code color="black">V = EPS × (8.5 + 2n) × 4.4</Code>
+                  <Code color="black">V = (EPS × (8.5 + 2n) × 4.4) / Y</Code>
                 </StatHelpText>
               </Stat>
+              {/* ​ EPV= WACC Adjusted earnings ​ */}
+              {/* (EPS for FY23P / EPS for FY18)1/5 – 1 */}
+              {/* PE RATIO / PE GROWTH RATE  */}
+              {/* https://www.wallstreetmojo.com/dcf-discounted-cash-flow-formula/ */}
+              {/* Dividend Discount Model = Intrinsic Value = Sum of Present Value of Dividends + Present Value of Stock Sale Price. */}
               <Spacer />
               <Button colorScheme={"twitter"} mt={2} onClick={onOpen}>
                 Choose Formula

@@ -1,11 +1,20 @@
-import { Box, Button, Flex, Heading, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Link,
+  Spacer,
+  Textarea,
+} from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { InputField } from "../components/InputField";
 import { Layout } from "../components/Layout";
+import TickerTape from "../components/TickerTape";
 import { useCreatePostMutation } from "../generated/graphql";
 import { createUrqlclient } from "../utils/createUrqlClient";
 import { useIsAuth } from "../utils/useIsAuth";
@@ -14,16 +23,30 @@ const CreatePost: React.FC<{}> = ({}) => {
   const router = useRouter();
   useIsAuth();
   const [, createPost] = useCreatePostMutation();
+  const [wlTickers, setWlTickers] = useState<string>("");
+  const [wlTicker, setWlTicker] = useState<string>("");
+  const [wlContent, setWlContent] = useState<string>("");
+  useEffect(() => {}, [wlTickers, wlTicker]);
+
+  const submitHandler = (e) => {
+    if (e.code === "Enter") e.preventDefault();
+  };
+
+  const addWlTickers = (e) => {
+    if (e.code === "Enter") {
+      submitHandler(e);
+      setWlTickers((current) => (current += ` $${wlTicker}`));
+      setWlTicker("");
+    }
+  };
+
   return (
     <Layout variant="regular">
       <Formik
         initialValues={{ title: "", content: "", tickers: "" }}
         onSubmit={async (values) => {
-          let _ticker = "";
-          values.tickers.split(" ").map((ticker) => {
-            _ticker += `$${ticker} `;
-          });
-          values.tickers = _ticker.trim();
+          values.tickers = wlTickers.trim().toUpperCase();
+          values.content = wlContent;
           const { error } = await createPost({ input: values });
           if (!error) {
             router.push("/");
@@ -33,19 +56,45 @@ const CreatePost: React.FC<{}> = ({}) => {
         {({ isSubmitting }) => (
           <Form>
             <Heading>Create a watchlist</Heading>
-            <br />
-            <InputField name="title" placeholder="Title" label="Title" />
-            <Box mt={6}>
+            <Flex height={12} pt={2} mt={8}>
+              <TickerTape tickers={wlTickers}></TickerTape>
+            </Flex>
+            {/* {wlTicker} */}
+            <Flex>
+              <InputField
+                name="title"
+                placeholder="Title"
+                label="Title"
+                style={{ width: "150%" }}
+                onKeyPress={submitHandler}
+              />
+              <Spacer />
               <InputField
                 name="tickers"
                 placeholder="Tickers"
                 label="Tickers"
+                value={wlTicker}
+                onChange={(e) => {
+                  setWlTicker(e.target.value);
+                }}
+                onKeyPress={(e) => {
+                  addWlTickers(e);
+                }}
+                style={{ textAlign: "right", width: "45%", float: "right" }}
               />
               <br />
               {/* ajouter timeframe picker */}
               <br />
-              <InputField name="content" placeholder="Note" label="Note" />
-            </Box>
+            </Flex>
+            <Textarea
+              name="content"
+              label="Content"
+              placeholder="Content"
+              style={{ marginTop: "2%", height: "8rem" }}
+              onChange={(e) => {
+                setWlContent(e.target.value);
+              }}
+            />
             <Flex>
               <Button
                 type="submit"

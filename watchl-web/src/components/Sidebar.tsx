@@ -1,8 +1,13 @@
 import { Stack, Box, Link, Heading } from "@chakra-ui/react";
 import React from "react";
 import NextLink from "next/link";
+import { useMeQuery } from "../generated/graphql";
+import { serverStateObs } from "../utils/serverStateObs";
 
 const Sidebar = ({}) => {
+  const [{ data, fetching }] = useMeQuery({
+    pause: serverStateObs(),
+  });
   return (
     <Stack
       spacing={"12"}
@@ -24,7 +29,10 @@ const Sidebar = ({}) => {
               </NextLink>
             </li>
             <li>
-              <NextLink href="/">
+              <NextLink
+                href="/user/[username]"
+                as={`/user/${data?.me?.username}`}
+              >
                 <Link>
                   <Heading size="md" color="#2D3748">
                     My Watchlists
@@ -60,7 +68,7 @@ const Sidebar = ({}) => {
               </NextLink>
             </li>
           </Stack>
-          <Stack spacing="6" mt="64" pt="48" align="stretch">
+          <Stack spacing="6" mt="48" pt="64" align="stretch">
             <li>
               <NextLink href="/">
                 <Link>
